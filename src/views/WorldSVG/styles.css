@@ -1,0 +1,49 @@
+@use '../../styles' as *;
+
+.base{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+}
+.world{
+    width: 70rem;
+    background-color: lightblue;
+    border-radius: 10rem;
+}
+svg path{
+    fill:green;
+    stroke: chocolate;
+}
+svg path:hover{
+    fill:darkgray;
+}
+.info{
+    border:black 0.05rem solid;
+    border-radius: 5%;
+    width: 25rem;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size:x-large;
+}
+
+.general{
+    display: flex;
+    flex-direction: column;
+}
+
+.general > ul{
+    list-style-type: none;
+}
+
+ul > li{
+    margin-bottom: 1rem;
+}
+
+.flag{
+    margin-left: 1.2rem;
+    border-radius: 100%;
+    width: 5rem;
+}
