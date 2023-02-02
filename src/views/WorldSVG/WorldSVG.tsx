@@ -1,37 +1,42 @@
-import { SyntheticEvent, useState } from 'react';
-import { Info } from './Info';
+import React from 'react';
+import { FC, SyntheticEvent } from 'react';
+import { CountryContext } from '../../CountryContext';
+import fetchData from '../../providers/bank-countries/api';
 import './styles.css';
+import { useCountry } from "../../countryHook";
 
-const fetchData = async (selectedCountryTemp: string) => {
-    const response = await fetch('https://restcountries.com/v3.1/alpha/'+selectedCountryTemp);
+const getData = async (selectedCountryTemp: string) => {
+    const response = await fetchData(selectedCountryTemp);
     if(response.status === 400){
         console.log("aaa");
         return null;
     }
     const responseParsed = await response.json();
-    // if(responseParsed)
+    console.log(typeof responseParsed);
     return responseParsed;
 }
 
-export function WorldSVG(): JSX.Element {
-    const [selectedCountry, setSelectedCountry] = useState('');
-    const [rest, setRest] = useState([]);
+export const WorldSVG: FC = () => {
+    const {country, setCountry} = React.useContext(CountryContext);
+    const {countryHook, setCountryHook} = useCountry();
+
     const clickHandler = async (event: SyntheticEvent) => {
         const a = event.target as HTMLElement;
         const selectedCountryTemp = a.id || a.getAttribute('class') || '';
-        const b = await fetchData(selectedCountryTemp);
+        const b = await getData(selectedCountryTemp);
         if(b === null){
             window.alert("This country does not have a code yet")
-        } 
-        else{
-            setRest(b);
+        } else {
+            console.log(b[1][0]);
+            setCountry(b[1][0]);
+            setCountryHook(b[1][0]);
         }
        
-        setSelectedCountry(selectedCountryTemp);
     }
     return (
         <div className="base">
-            <h1>{selectedCountry}</h1>
+            <h1>Context: {country?.name}</h1>
+            <h1>Hook: {countryHook?.name}</h1>
             <svg className="world" onClick={clickHandler} baseProfile="tiny" strokeLinecap="round" strokeLinejoin="round" version="1.2" viewBox="0 0 2000 857" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1383 261.6l1.5 1.8-2.9 0.8-2.4 1.1-5.9 0.8-5.3 1.3-2.4 2.8 1.9 2.7 1.4 3.2-2 2.7 0.8 2.5-0.9 2.3-5.2-0.2 3.1 4.2-3.1 1.7-1.4 3.8 1.1 3.9-1.8 1.8-2.1-0.6-4 0.9-0.2 1.7-4.1 0-2.3 3.7 0.8 5.4-6.6 2.7-3.9-0.6-0.9 1.4-3.4-0.8-5.3 1-9.6-3.3 3.9-5.8-1.1-4.1-4.3-1.1-1.2-4.1-2.7-5.1 1.6-3.5-2.5-1 0.5-4.7 0.6-8 5.9 2.5 3.9-0.9 0.4-2.9 4-0.9 2.6-2-0.2-5.1 4.2-1.3 0.3-2.2 2.9 1.7 1.6 0.2 3 0 4.3 1.4 1.8 0.7 3.4-2 2.1 1.2 0.9-2.9 3.2 0.1 0.6-0.9-0.2-2.6 1.7-2.2 3.3 1.4-0.1 2 1.7 0.3 0.9 5.4 2.7 2.1 1.5-1.4 2.2-0.6 2.5-2.9 3.8 0.5 5.4 0z" id="AF" name="Afghanistan">
                 </path>
@@ -980,13 +985,6 @@ export function WorldSVG(): JSX.Element {
                 <circle cx="1798.2" cy="719.3" id="2">
                 </circle>
             </svg>
-            {rest[0] !== undefined
-            ? (
-                <Info 
-                    data = {rest[0]}
-                />
-            )
-            : null }
         </div>
     );
 }
